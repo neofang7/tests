@@ -10,7 +10,8 @@ export KATA_KSM_THROTTLER=${KATA_KSM_THROTTLER:-no}
 export KATA_QEMU_DESTDIR=${KATA_QEMU_DESTDIR:-"/usr"}
 export KATA_ETC_CONFIG_PATH="/etc/kata-containers/configuration.toml"
 
-export katacontainers_repo=${katacontainers_repo:="github.com/kata-containers/kata-containers"}
+#export katacontainers_repo=${katacontainers_repo:="github.com/kata-containers/kata-containers"}
+export katacontainers_repo=${katacontainers_repo:="github.com/neofang7/kata-containers"}
 export katacontainers_repo_dir="${GOPATH}/src/${katacontainers_repo}"
 export kata_default_branch="${kata_default_branch:-main}"
 export CI_JOB="${CI_JOB:-}"
@@ -54,6 +55,7 @@ fi
 
 #tests_repo="${tests_repo:-github.com/kata-containers/tests}"
 tests_repo="${tests_repo:-github.com/neofang7/tests}"
+echo "tests_repo = ${tests_repo}"
 lib_script="${GOPATH}/src/${tests_repo}/lib/common.bash"
 source "${lib_script}"
 
