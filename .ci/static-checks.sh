@@ -20,7 +20,8 @@ source "${cidir}/lib.sh"
 # set GO111MODULE to "auto" to enable module-aware mode only when
 # a go.mod file is present in the current directory.
 export GO111MODULE="auto"
-export tests_repo="${tests_repo:-github.com/kata-containers/tests}"
+export tests_repo="${tests_repo:-github.com/neofang7/tests}"
+#export tests_repo="${tests_repo:-github.com/kata-containers/tests}"
 export tests_repo_dir="${GOPATH}/src/${tests_repo}"
 
 # List of files to delete on exit
@@ -1207,7 +1208,7 @@ static_check_dockerfiles()
 	linter_cmd+=" --ignore DL3041"
 	# "DL3033 warning: Specify version with `yum install -y <package>-<version>`"
 	linter_cmd+=" --ignore DL3033"
-	# "DL3018 warning: Pin versions in apk add. Instead of `apk add <package>` use `apk add <package>=<version>`" 
+	# "DL3018 warning: Pin versions in apk add. Instead of `apk add <package>` use `apk add <package>=<version>`"
 	linter_cmd+=" --ignore DL3018"
 	# "DL3003 warning: Use WORKDIR to switch to a directory"
 	# See https://github.com/hadolint/hadolint/issues/70

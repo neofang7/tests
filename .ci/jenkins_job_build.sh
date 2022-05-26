@@ -36,7 +36,8 @@ export kata_repo="$1"
 
 echo "Setup env for kata repository: $kata_repo"
 
-tests_repo="${tests_repo:-github.com/kata-containers/tests}"
+#tests_repo="${tests_repo:-github.com/kata-containers/tests}"
+tests_repo="${tests_repo:-github.com/neofang7/tests}"
 katacontainers_repo="${katacontainers_repo:-github.com/kata-containers/kata-containers}"
 
 if [ "${kata_repo}" == "${katacontainers_repo}" ]; then

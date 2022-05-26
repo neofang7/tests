@@ -48,7 +48,8 @@ export WORKSPACE=${WORKSPACE:-$HOME}
 export GOPATH="${WORKSPACE}/go"
 
 # Repository where we store all tests
-tests_repo="github.com/kata-containers/tests"
+#tests_repo="github.com/kata-containers/tests"
+tests_repo="github.com/neofang7/tests"
 
 # Clone as golang would do it with GOPATH
 tests_repo_dir="${GOPATH}/src/${tests_repo}"

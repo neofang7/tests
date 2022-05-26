@@ -114,7 +114,8 @@ case "${CI_JOB}" in
 		export RUNTIME="kata-runtime"
 		export CTR_RUNTIME="io.containerd.kata.v2"
 		export config_path="/usr/share/defaults/kata-containers"
-		tests_repo="github.com/kata-containers/tests"
+		#tests_repo="github.com/kata-containers/tests"
+		tests_repo="github.com/neofang7/tests"
 
 		echo "INFO: Running qemu metrics tests"
 		export KATA_HYPERVISOR="qemu"
