@@ -53,7 +53,7 @@ tests_repo="github.com/neofang7/tests"
 
 # Clone as golang would do it with GOPATH
 tests_repo_dir="${GOPATH}/src/${tests_repo}"
-[ -d "$tests_repo_dir" ] || git clone "https://${tests_repo}.git" "${tests_repo_dir}"
+[ -d "$tests_repo_dir" ] || git clone -b "main-neo" "https://${tests_repo}.git" "${tests_repo_dir}"
 cd "${tests_repo_dir}"
 
 echo "INFO: Running CI scripts for repo $repo_to_test"

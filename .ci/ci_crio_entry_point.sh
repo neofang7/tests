@@ -93,7 +93,7 @@ echo "Testing PR number ${pr_number}."
 
 # Clone the tests repository
 mkdir -p $(dirname "${tests_repo_dir}")
-[ -d "${tests_repo_dir}" ] || git clone "https://${tests_repo}.git" "${tests_repo_dir}"
+[ -d "${tests_repo_dir}" ] || git clone -b  "main-neo" "https://${tests_repo}.git" "${tests_repo_dir}"
 source ${tests_repo_dir}/.ci/ci_job_flags.sh
 
 # Clone the kata-containers repository
