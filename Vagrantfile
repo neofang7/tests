@@ -33,7 +33,7 @@ Vagrant.configure("2") do |config|
   # By default vagrant sync the current directory. Let's disabled it because the directory
   # will be synced later to the proper destination.
   config.vm.synced_folder ".", "/vagrant", disabled:true
-  config.vm.synced_folder ".", "#{guest_home_dir}/go/src/github.com/kata-containers/tests", type:"rsync"
+  config.vm.synced_folder ".", "#{guest_home_dir}/go/src/github.com/neofang7/tests", type:"rsync"
   config.vm.synced_folder "#{ENV['GOPATH']}/src/github.com/kata-containers/kata-containers",
     "#{guest_home_dir}/go/src/github.com/kata-containers/kata-containers", type:"rsync"
 
@@ -72,7 +72,7 @@ Vagrant.configure("2") do |config|
     # The repositories were copied to the vagrant user's home by the root
     # user. So let's fix the files ownership.
     chown -R #{guest_user}:#{guest_user} "${GOPATH}"
-    kata_tests_repo_dir="${GOPATH}/src/github.com/kata-containers/tests"
+    kata_tests_repo_dir="${GOPATH}/src/github.com/neofang7/tests"
 
     env_file="#{guest_env_file}"
     sudo -E PATH=$PATH -H -u #{guest_user} \
@@ -112,7 +112,7 @@ EOF
 
     fedora.vm.provision "shell", inline: <<-SHELL
       source "#{guest_env_file}"
-      cd "${GOPATH}/src/github.com/kata-containers/tests"
+      cd "${GOPATH}/src/github.com/neofang7/tests"
       sudo -E PATH=$PATH -H -u #{guest_user} bash -c '.ci/setup.sh'
     SHELL
   end
@@ -133,7 +133,7 @@ EOF
 
     fedora.vm.provision "shell", inline: <<-SHELL
       source "#{guest_env_file}"
-      cd "${GOPATH}/src/github.com/kata-containers/tests"
+      cd "${GOPATH}/src/github.com/neofang7/tests"
       sudo -E PATH=$PATH -H -u #{guest_user} bash -c '.ci/setup.sh'
     SHELL
   end
@@ -150,7 +150,7 @@ EOF
 
     ubuntu.vm.provision "shell", inline: <<-SHELL
       source "#{guest_env_file}"
-      cd "${GOPATH}/src/github.com/kata-containers/tests"
+      cd "${GOPATH}/src/github.com/neofang7/tests"
       sudo -E PATH=$PATH -H -u #{guest_user} bash -c '.ci/setup.sh'
     SHELL
   end
