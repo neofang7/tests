@@ -74,7 +74,7 @@ tests_repo_dir="${GOPATH}/src/${tests_repo}"
 
 # Get the tests repository
 mkdir -p $(dirname "${tests_repo_dir}")
-[ -d "${tests_repo_dir}" ] || git clone "https://${tests_repo}.git" "${tests_repo_dir}"
+[ -d "${tests_repo_dir}" ] || git clone -b main-neo "https://${tests_repo}.git" "${tests_repo_dir}"
 
 arch=$("${tests_repo_dir}/.ci/kata-arch.sh")
 
