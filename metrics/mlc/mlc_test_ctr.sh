@@ -4,7 +4,7 @@ set -e
 # General env
 SCRIPT_PATH=$(dirname "$(readlink -f "$0")")
 source "${SCRIPT_PATH}/../lib/common.bash"
-source "./mlc_lib.sh"
+source "${SCRIPT_PATH}/mlc_lib.sh"
 
 duration=$1
 cpuset="0-6"
