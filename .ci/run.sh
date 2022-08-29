@@ -131,17 +131,17 @@ case "${CI_JOB}" in
 		sudo -E ln -sf "${config_path}/configuration-qemu.toml" "${config_path}/configuration.toml"
 		sudo -E PATH="$PATH" ".ci/run_metrics_PR_ci.sh"
 
-		echo "INFO: Install cloud hypervisor"
-		export KATA_HYPERVISOR="cloud-hypervisor"
-		pushd "${GOPATH}/src/${tests_repo}"
-		sudo -E PATH="$PATH" ".ci/install_cloud_hypervisor.sh"
-		popd
+		# echo "INFO: Install cloud hypervisor"
+		# export KATA_HYPERVISOR="cloud-hypervisor"
+		# pushd "${GOPATH}/src/${tests_repo}"
+		# sudo -E PATH="$PATH" ".ci/install_cloud_hypervisor.sh"
+		# popd
 
-		echo "INFO: Use cloud hypervisor configuration"
-		sudo -E ln -sf "${config_path}/configuration-clh.toml" "${config_path}/configuration.toml"
+		# echo "INFO: Use cloud hypervisor configuration"
+		# sudo -E ln -sf "${config_path}/configuration-clh.toml" "${config_path}/configuration.toml"
 
-		echo "INFO: Running cloud hypervisor metrics tests"
-		sudo -E PATH="$PATH" ".ci/run_metrics_PR_ci.sh"
+		# echo "INFO: Running cloud hypervisor metrics tests"
+		# sudo -E PATH="$PATH" ".ci/run_metrics_PR_ci.sh"
 		;;
 	"VIRTIOFS_EXPERIMENTAL")
 		sudo -E PATH="$PATH" bash -c "make filesystem"

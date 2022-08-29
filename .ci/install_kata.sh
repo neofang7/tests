@@ -60,7 +60,7 @@ case "${KATA_HYPERVISOR}" in
 		;;
 	"qemu")
 		install_qemu
-		[ "${arch}" == "x86_64" ] && "${cidir}/install_virtiofsd.sh"
+		#[ "${arch}" == "x86_64" ] && "${cidir}/install_virtiofsd.sh"
 		;;
 	*)
 		die "${KATA_HYPERVISOR} not supported for CI install"

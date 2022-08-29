@@ -42,7 +42,8 @@ setup_distro_env() {
 	[ -n "$script" ] || die "Failed to determine distro setup script"
 	[ -e "$script" ] || die "Unrecognised distribution: ${ID}"
 
-	bash -f "${script}" "${setup_type}"
+	#bash -f "${script}" "${setup_type}"
+	echo "Disable setup environment ${setup_type}"
 
 	sudo systemctl start haveged
 }

@@ -28,6 +28,8 @@ init() {
 run() {
 	pushd "$SCRIPT_DIR/../metrics"
 
+    mlc/mlc_test_ctr.sh 120
+
 	# Cloud hypervisor tests are being affected by kata-containers/kata-containers/issues/1488
 	if [ "${KATA_HYPERVISOR}" != "cloud-hypervisor" ]; then
 		# If KSM is available on this platform, let's run any tests that are
@@ -90,11 +92,11 @@ check() {
 		fi
 
 		# Save results
-		sudo mkdir -p "${RESULTS_DIR}/artifacts"
-		echo "Move results"
-		for f in ${RESULTS_DIR}/*.json; do
-			mv -- "$f" "${RESULTS_DIR}/artifacts/${KATA_HYPERVISOR}-$(basename $f)"
-		done
+		# sudo mkdir -p "${RESULTS_DIR}/artifacts"
+		# echo "Move results"
+		# for f in ${RESULTS_DIR}/*.json; do
+		# 	mv -- "$f" "${RESULTS_DIR}/artifacts/${KATA_HYPERVISOR}-$(basename $f)"
+		# done
 
 	fi
 }
