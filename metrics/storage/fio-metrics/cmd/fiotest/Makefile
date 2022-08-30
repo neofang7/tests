@@ -8,7 +8,7 @@ MKFILE_PATH := $(abspath $(lastword $(MAKEFILE_LIST)))
 MKFILE_DIR := $(dir $(MKFILE_PATH))
 
 build:
-	GO111MODULE=on go build
+	GO111MODULE=on go build -buildvcs=false
 
 run: build
 	$(MKFILE_DIR)/fio-k8s --debug --fio.size 10M --output-dir test-results --test-name kata $(MKFILE_DIR)/../../configs/example-config/
