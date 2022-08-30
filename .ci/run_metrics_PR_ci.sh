@@ -28,7 +28,8 @@ init() {
 run() {
 	pushd "$SCRIPT_DIR/../metrics"
 
-    mlc/mlc_test_ctr.sh 120
+	mlc/mlc_test_ctr.sh 120
+	bash storage/fio-metrics/scripts/fio-test/fio-test.sh
 
 	# Cloud hypervisor tests are being affected by kata-containers/kata-containers/issues/1488
 	if [ "${KATA_HYPERVISOR}" != "cloud-hypervisor" ]; then
