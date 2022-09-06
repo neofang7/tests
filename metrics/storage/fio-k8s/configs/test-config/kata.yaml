@@ -10,7 +10,13 @@ spec:
   runtimeClassName: kata
   containers:
   - name: iometrics
-    image: ubuntu:latest
+    image: docker.io/library/metrics-ubuntu:v1
+    env:
+      - name: http_proxy
+        value: http://child-prc.intel.com:913
+      - name: https_proxy
+        value: http://child-prc.intel.com:913
     # Just spin & wait forever
     command: [ "/bin/bash", "-c", "--" ]
     args: [ "sleep infinity" ]
+

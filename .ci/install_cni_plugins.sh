@@ -11,6 +11,8 @@ cidir=$(dirname "$0")
 source "${cidir}/lib.sh"
 
 plugins_version=$(get_version "externals.cni-plugins.commit")
+echo "TODO: modify get_version to the correct versions.yaml Set plugins_version to v.1.1"
+plugins_version="v1.1.1"
 echo "Retrieve CNI plugins repository"
 go get -d github.com/containernetworking/plugins || true
 pushd $GOPATH/src/github.com/containernetworking/plugins

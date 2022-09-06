@@ -119,7 +119,7 @@ branch=
 # This ensures:
 # - We have latest changes in install_go.sh
 # - We got get changes if versions.yaml changed.
-"${GOPATH}/src/${tests_repo}/.ci/install_go.sh" -p -f
+#"${GOPATH}/src/${tests_repo}/.ci/install_go.sh" -p -f
 
 if [ -n "$pr_number" ]; then
 	export branch="${ghprbTargetBranch}"
