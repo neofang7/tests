@@ -30,6 +30,7 @@ export CRI_RUNTIME="containerd"
 #export CI_JOB="CRI_CONTAINERD_K8S_MINIMAL"
 export CCV0="yes"
 export CI_JOB="METRICS"
+export METRICS_CI="yes"
 
 ci_dir_name=".ci"
 

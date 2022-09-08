@@ -27,6 +27,9 @@ function preinstall() {
 function run_a_mlc_case() {
     mlc_cmd=$1
     output=$(ctr_run_a_mlc_case ${mlc_cmd})
+    echo 3 > /proc/sys/vm/drop_caches
+    output=`ctr run --runtime io.containerd.run.kata.v2 --rm docker.io/library/mlc:v1 mlc /bin/bash -c "${mlc_cmd}"`
+    sleep 10
     
     echo ${output}
 }
@@ -37,10 +40,10 @@ function cleanup() {
 }
 
 function mlc_test() {
-    restart_containerd_service
-    preinstall
+    #restart_containerd_service
+    #preinstall
 
-    init_env
+    #init_env
     metrics_json_init
     save_config
 

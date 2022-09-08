@@ -124,11 +124,11 @@ case "${CI_JOB}" in
 		export RUNTIME="kata-runtime"
 		export CTR_RUNTIME="io.containerd.kata.v2"
 		export config_path="/usr/share/defaults/kata-containers"
-		tests_repo="github.com/kata-containers/tests"
+		#tests_repo="github.com/kata-containers/tests"
 
 		echo "INFO: Running qemu metrics tests"
 		export KATA_HYPERVISOR="qemu"
-		sudo -E ln -sf "${config_path}/configuration-qemu.toml" "${config_path}/configuration.toml"
+		#sudo -E ln -sf "${config_path}/configuration-qemu.toml" "${config_path}/configuration.toml"
 		sudo -E PATH="$PATH" ".ci/run_metrics_PR_ci.sh"
 
 		# echo "INFO: Install cloud hypervisor"
