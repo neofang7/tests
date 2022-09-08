@@ -170,7 +170,7 @@ if [ "$TEE_TYPE" == "tdx" ]; then
         sudo sed -i -e 's/vmlinux.container/vmlinuz-tdx.container/' "${runtime_config_path}"
         sudo sed -i -e 's/^# confidential_guest/confidential_guest/' "${runtime_config_path}"
 		if [ "$TEE_CONFIDENTIAL_GUEST" == "false" ]; then
-			cg_value=$(grep "^confidential_guest =" -r ${toml_file} | awk {'print $3'})
+			cg_value=$(grep "^confidential_guest =" -r ${runtime_config_path} | awk {'print $3'})
 			if [ "${cg_value}" == "false" ]; then
 			    echo "No need to set the value false in ${runtime_config_path}"
 			else
