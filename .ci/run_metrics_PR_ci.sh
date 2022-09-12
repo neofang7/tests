@@ -109,4 +109,4 @@ check() {
 
 init
 run
-check
+#check

@@ -18,7 +18,7 @@ export CRI_RUNTIME="containerd"
 export KATA_HYPERVISOR="qemu"
 export KATA_BUILD_CC="yes"
 #export TEE_TYPE="tdx"
-export TEE_CONFIDENTIAL_GUEST="false"
+#export TEE_CONFIDENTIAL_GUEST="false"
 #export KATA_BUILD_KERNEL_TYPE="tdx"
 #export KATA_BUILD_QEMU_TYPE="tdx"
 export KUBERNETES="yes"
@@ -92,5 +92,27 @@ popd
 
 echo "Running the metrics tests:"
 ".ci/run.sh"
+
+if [ ${TEE_CONFIDENTIAL_GUEST} == "false" ]
+then
+	mv metrics/results metrics/legacy-results
+else
+	mv metrics/results metrics/tdx-results
+fi	
+
+echo "TEE_CONFIDENTIAL_GUEST == ${TEE_CONFIDENTIAL_GUEST}"
+
+if [ ${TEE_CONFIDENTIAL_GUEST} == "false" ]
+then
+       mv metrics/results metrics/legacy-results
+else
+       mv metrics/results metrics/tdx-results
+fi
+
+mkdir -p metrics/results
+
+sudo kubeadm reset -f --cri-socket /run/containerd/containerd.sock
+
+echo "Test Completed."
 
 popd
