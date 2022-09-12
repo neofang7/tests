@@ -175,7 +175,7 @@ if [ "$TEE_TYPE" == "tdx" ]; then
 			    echo "No need to set the value false in ${runtime_config_path}"
 			else
 			    echo "set confidential_guest false in ${runtime_config_path}"
-				sudo sed -i -e "s/^confidential_guest = false/confidential_guest = false/g" ${runtime_config_path}
+				sudo sed -i -e "s/^confidential_guest = true/confidential_guest = false/g" ${runtime_config_path}
 			fi
 		fi
 		grep "confidential_guest" -r "${runtime_config_path}"

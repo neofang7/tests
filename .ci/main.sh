@@ -102,6 +102,8 @@ fi
 
 echo "TEE_CONFIDENTIAL_GUEST == ${TEE_CONFIDENTIAL_GUEST}"
 
+sudo chown jenkins -R metrics/results
+
 if [ ${TEE_CONFIDENTIAL_GUEST} == "false" ]
 then
        mv metrics/results metrics/legacy-results

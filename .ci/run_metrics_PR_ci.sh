@@ -29,7 +29,7 @@ run() {
 	pushd "$SCRIPT_DIR/../metrics"
 
 	if [ $METRICS_MLC == "true" ]; then
-		mlc/mlc_test_ctr.sh 120
+		mlc/mlc_test_ctr.sh 60
 	fi
 
 	if [ $METRICS_FIO == "true" ]; then
