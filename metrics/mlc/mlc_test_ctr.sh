@@ -91,9 +91,11 @@ function mlc_test() {
 
     local_IDLE="mlc --idle_latency -b2g -t${duration} -c0 -j0 -l128"
     output=$(run_a_mlc_case "$local_IDLE")
-    data=$(handle_mlc_output "${output}")
+    #data=$(handle_mlc_output "${output}")
+    data=${output##*clocks}
+
     echo "Local Idle Latency: $data"
-    local_IDLE=$(echo $data | awk '{print $3}')
+    local_IDLE=$(echo $data | awk '{print $2}')
 
     #remote testing
     # Remote_100R_BW="mlc --loaded_latency -k$cpuset -c$latency_core -j1 -d0 -t$duration -R &&wait"
