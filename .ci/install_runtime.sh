@@ -165,33 +165,10 @@ if [ "$arch" == "aarch64" -a "${KATA_HYPERVISOR}" == "qemu" -a "${ENABLE_ARM64_U
 	sudo sed -i 's|#pflashes|pflashes|' "${runtime_config_path}"
 fi
 
-if [ "$TEE_TYPE" == "tdx" ]; then
-        echo "Use tdx enabled guest config in ${runtime_config_path}"
-        sudo sed -i -e 's/vmlinux.container/vmlinuz-tdx.container/' "${runtime_config_path}"
-        sudo sed -i -e 's/^# confidential_guest/confidential_guest/' "${runtime_config_path}"
-		if [ "$TEE_CONFIDENTIAL_GUEST" == "false" ]; then
-			cg_value=$(grep "^confidential_guest =" -r ${runtime_config_path} | awk {'print $3'})
-			if [ "${cg_value}" == "false" ]; then
-			    echo "No need to set the value false in ${runtime_config_path}"
-			else
-			    echo "set confidential_guest false in ${runtime_config_path}"
-				sudo sed -i -e "s/^confidential_guest = true/confidential_guest = false/g" ${runtime_config_path}
-			fi
-		fi
-		grep "confidential_guest" -r "${runtime_config_path}"
-
-        sudo sed -i -e 's/^kernel_params = "\(.*\)"/kernel_params = "\1 force_tdx_guest tdx_disable_filter "/g' "${runtime_config_path}"
-		#Set Pod runtime configuration.
-		sudo sed -i -e "s/^default_vcpus = 1/default_vcpus = 8/g" "${runtime_config_path}"
-		sudo sed -i -e "s/^default_memory = 2048/default_memory = 32768/g" "${runtime_config_path}"
-        case "${KATA_HYPERVISOR}" in
-		"cloud-hypervisor")
-			sudo sed -i -e 's/^firmware = ".*"/firmware = "\/usr\/share\/td-shim\/final-pe.bin"/' "${runtime_config_path}"
-			;;
-
-		"qemu")
-			sudo sed -i -e 's/^firmware = ".*"/firmware = "\/usr\/share\/qemu\/OVMF.fd"/' "${runtime_config_path}"
-			sudo sed -i -e 's/^firmware_volume = ".*"/firmware_volume = "\/usr\/share\/qemu\/OVMF_VARS.fd"/' "${runtime_config_path}"
-			;;
-        esac
+if [ "$TEE_CONFIDENTIAL_GUEST" == "false" ]; then
+	echo "install_runtime configuration_legacy_metrics.toml"
+       sudo cp metrics/configs/configuration_legacy_metrics.toml  /usr/share/defaults/kata-containers/configuration.toml
+else
+	echo "install_runtime configuration_tdx_metrics.toml"
+       sudo cp metrics/configs/configuration_tdx_metrics.toml  /usr/share/defaults/kata-containers/configuration.toml
 fi

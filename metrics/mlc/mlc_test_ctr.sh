@@ -26,9 +26,8 @@ function preinstall() {
 
 function run_a_mlc_case() {
     mlc_cmd=$1
-    output=$(ctr_run_a_mlc_case ${mlc_cmd})
     echo 3 > /proc/sys/vm/drop_caches
-    output=`ctr run --runtime io.containerd.run.kata.v2 --rm docker.io/library/mlc:v1 mlc /bin/bash -c "${mlc_cmd}"`
+    output=`sudo -E ctr -n k8s.io run --runtime io.containerd.run.kata.v2 --rm docker.io/library/metrics-centos:v1 mlc /bin/bash -c "${mlc_cmd}"`
     sleep 10
     
     echo ${output}
