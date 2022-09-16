@@ -18,6 +18,7 @@ CHECKMETRICS_CONFIG_DEFDIR="/etc/checkmetrics"
 CHECKMETRICS_CONFIG_DIR="${CHECKMETRICS_DIR}/ci_worker"
 CM_DEFAULT_DENSITY_CONFIG="${CHECKMETRICS_DIR}/baseline/density-CI.toml"
 KATA_HYPERVISOR="${KATA_HYPERVISOR:-qemu}"
+METRICS_IPERF="${METRICS_IPERF:-false}"
 
 # Set up the initial state
 init() {
@@ -36,40 +37,43 @@ run() {
 		bash storage/fio-k8s/scripts/fio-test/fio-test.sh
 	fi
 
-	# Cloud hypervisor tests are being affected by kata-containers/kata-containers/issues/1488
-	if [ "${KATA_HYPERVISOR}" != "cloud-hypervisor" ]; then
+
+	if [ $METRICS_LEGACY == "true" ]; then
+		# Cloud hypervisor tests are being affected by kata-containers/kata-containers/issues/1488
+		if [ "${KATA_HYPERVISOR}" != "cloud-hypervisor" ]; then
 		# If KSM is available on this platform, let's run any tests that are
 		# affected by having KSM on/orr first, and then turn it off for the
 		# rest of the tests, as KSM may introduce some extra noise in the
 		# results by stealing CPU time for instance.
-		if [[ -f ${KSM_ENABLE_FILE} ]]; then
-			save_ksm_settings
-			trap restore_ksm_settings EXIT QUIT KILL
-			set_ksm_aggressive
+			if [[ -f ${KSM_ENABLE_FILE} ]]; then
+				save_ksm_settings
+				trap restore_ksm_settings EXIT QUIT KILL
+				set_ksm_aggressive
 
-			# Run the memory footprint test - the main test that
-			# KSM affects.
-			bash density/memory_usage.sh 20 300 auto
+				# Run the memory footprint test - the main test that
+				# KSM affects.
+				bash density/memory_usage.sh 20 300 auto
+			fi
 		fi
+
+		restart_docker_service
+
+		# Run the density tests - no KSM, so no need to wait for settle
+		# (so set a token 5s wait)
+		disable_ksm
+		bash density/memory_usage.sh 20 5
+
+		# Run storage tests
+		bash storage/blogbench.sh
+
+		# Run the density test inside the container
+		bash density/memory_usage_inside_container.sh
+
+		# Run the time tests
+		bash time/launch_times.sh -i public.ecr.aws/ubuntu/ubuntu:latest -n 20
 	fi
 
-	restart_docker_service
-
-	# Run the density tests - no KSM, so no need to wait for settle
-	# (so set a token 5s wait)
-	disable_ksm
-	bash density/memory_usage.sh 20 5
-
-	# Run storage tests
-	bash storage/blogbench.sh
-
-	# Run the density test inside the container
-	bash density/memory_usage_inside_container.sh
-
-	# Run the time tests
-	bash time/launch_times.sh -i public.ecr.aws/ubuntu/ubuntu:latest -n 20
-
-	if [ "${KATA_HYPERVISOR}" = "cloud-hypervisor" ]; then
+	if [ $METRICS_IPERF == "true" ]; then
 		# Run the cpu statistics test
 		bash network/iperf3_kubernetes/k8s-network-metrics-iperf3.sh -b
 	fi

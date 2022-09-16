@@ -93,6 +93,9 @@ popd
 echo "Running the metrics tests:"
 ".ci/run.sh"
 
+sudo chown jenkins -R metrics/results
+sudo chgrp jenkins -R metrics/results
+
 if [ ${TEE_CONFIDENTIAL_GUEST} == "false" ]
 then
 	mv metrics/results metrics/legacy-results
@@ -100,20 +103,11 @@ else
 	mv metrics/results metrics/tdx-results
 fi	
 
-echo "TEE_CONFIDENTIAL_GUEST == ${TEE_CONFIDENTIAL_GUEST}"
-
-sudo chown jenkins -R metrics/results
-
-if [ ${TEE_CONFIDENTIAL_GUEST} == "false" ]
-then
-       mv metrics/results metrics/legacy-results
-else
-       mv metrics/results metrics/tdx-results
-fi
-
 mkdir -p metrics/results
 
-sudo kubeadm reset -f --cri-socket /run/containerd/containerd.sock
+pushd "${GOPATH}/src/${test_repo}/integration/kubernetes"
+    bash ./cleanup_env.sh
+popd
 
 echo "Test Completed."
 
