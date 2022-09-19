@@ -172,11 +172,19 @@ function start_kubernetes() {
         popd
 }
 
+function end_kubernetes() {
+        info "End k8s"
+        pushd "${GOPATH}/src/${test_repo}/integration/kubernetes"
+        bash ./cleanup_env.sh
+        popd
+}
+
 main() {
 	mkdir -p "${results_dir}"
 	start_kubernetes
 	#k8s_baremetal
 	fio_full_test
+	end_kubernetes
 }
 
 main $*
