@@ -105,10 +105,6 @@ fi
 
 mkdir -p metrics/results
 
-pushd "${GOPATH}/src/${test_repo}/integration/kubernetes"
-    bash ./cleanup_env.sh
-popd
-
 echo "Test Completed."
 
 popd
