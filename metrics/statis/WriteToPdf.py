@@ -42,7 +42,7 @@ def write_to_pdf(csv_file, head, pdf):
     pdf.ln(10)
 
     pdf.set_font('Courier', '', 12)
-    col_width = page_width/3
+    col_width = page_width/4
 
     start = 0
     for line in contents:
@@ -72,21 +72,12 @@ def write_to_pdf(csv_file, head, pdf):
 
     pdf.ln(10)
 
-def write_fio_to_pdf(csv_file, head, pdf):
-    try:
-        f = open(csv_file, 'r')
-    except FileNotFoundError as e:
-        print("Ign: No such firle or directory: {}.".format(csv_file))
-        return
-    contents = list(csv.reader(f))
-    page_width = pdf.w - 2*pdf.l_margin
-    pdf.set_font('Times', 'B', 14.0)
-    pdf.cell(page_width, 0.0, head, align='C')
-    pdf.ln(10)
+def write_fio_contents_to_pdf(contents, page_width, pdf):
 
     start = 0
     label_line = contents[0]
-    columns = len(label_line)
+
+    columns = len(label_line)+2
     cc_line = contents[1]
     col_width = int(page_width/columns)
 
@@ -96,7 +87,7 @@ def write_fio_to_pdf(csv_file, head, pdf):
     for i in range(1, len(label_line)):
         if i%2 == 0:
             continue
-        pdf.cell(col_width*2, th, label_line[i], border=1, align='C')
+        pdf.cell(col_width*3, th, label_line[i], border=1, align='C')
 
     pdf.ln(th)
     pdf.set_font('Courier', 'B', 8)
@@ -115,11 +106,37 @@ def write_fio_to_pdf(csv_file, head, pdf):
         for j in range(1, len(row)):
             pdf.set_font('Courier', '', 10)
             th = pdf.font_size
-            data = str(round(float(row[j]), 2))
-            pdf.cell(col_width, th, data, border=1, align = 'R')
+            if type(row[j]) == 'float':
+                data = str(round(float(row[j]), 2))
+                pdf.cell(col_width, th, data, border=1, align = 'R')
+            else:
+                pdf.cell(col_width, th, row[j], border=1, align = 'R')
         pdf.ln(th)
 
     pdf.ln(10)
+
+def write_fio_to_pdf(bw_csv_file, iops_csv_file, head, pdf):
+    try:
+        f = open(bw_csv_file, 'r')
+    except FileNotFoundError as e:
+        print("Ign: No such firle or directory: {}.".format(bw_csv_file))
+        return
+    
+    contents = list(csv.reader(f))
+    page_width = pdf.w - 2*pdf.l_margin
+    pdf.set_font('Times', 'B', 14.0)
+    pdf.cell(page_width, 0.0, head, align='C')
+    pdf.ln(10)
+
+    write_fio_contents_to_pdf(contents, page_width, pdf)
+    try:
+        f = open(iops_csv_file, 'r')
+    except FileNotFoundError as e:
+        print("Ign: No such firle or directory: {}.".format(iops_csv_file))
+        return
+    contents = list(csv.reader(f))
+    write_fio_contents_to_pdf(contents, page_width, pdf)
+    
 
 if __name__ == '__main__':
     # parse folder and get the generated json files.
@@ -136,12 +153,13 @@ if __name__ == '__main__':
                  'Memory Footprint Inside Container', pdf)
     write_to_pdf('merge-output/memory-footprint-ksm.csv',
                  'Memory Footprint KSM', pdf)
+    write_to_pdf('merge-output/network-iperf3-bandwidth.csv', 'Network Iperf3 Bandwidth', pdf)
     pdf.add_page()
     write_to_pdf('merge-output/mlc.csv', 'MLC', pdf)
     write_to_pdf('merge-output/mlc-full.csv', 'MLC Full', pdf)
 
     pdf.add_page()
-    write_fio_to_pdf('merge-output/fio_64_4k.csv', 'Fio 64 4K Metrics', pdf)
-    write_fio_to_pdf('merge-output/fio_64_64k.csv', 'Fio 64 64K Metrics', pdf)
+    write_fio_to_pdf('merge-output/bw_fio_64_4k.csv', 'merge-output/iops_fio_64_4k.csv', 'Fio 64 4K Metrics', pdf)
+    write_fio_to_pdf('merge-output/bw_fio_64_64k.csv', 'merge-output/iops_fio_64_64k.csv', 'Fio 64 64K Metrics', pdf)
 
     pdf.output('Metrics_Test_Report.pdf', 'F')

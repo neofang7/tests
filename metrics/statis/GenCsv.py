@@ -5,13 +5,12 @@ import types
 from MemoryFootprint import MemoryFootprint
 from Blogbench import Blogbench
 from BootTimes import BootTimes
-from NetworkIperf3 import NetworkIperf3
 from MemoryFootprintInsideContainer import MemoryFootprintInsideContainer
 from MemoryFootprintKsm import MemoryFootprintKsm
 from Mlc import Mlc
 from MlcFull import MlcFull
 from Fio import FioCases
-
+from NetworkIperf3Bandwidth import NetworkIperf3Bandwidth
 
 def filename_to_classname(file_name, postfix):
     #remove .py
@@ -27,7 +26,8 @@ if __name__ == '__main__':
     # parse folder and get the generated json files.
     args = sys.argv[1:]
     result_path = args[0]
-    output_path = './output/'
+
+    output_path = result_path.replace("results", "output")
 
     if not os.path.exists(output_path):
         os.mkdir(output_path)
