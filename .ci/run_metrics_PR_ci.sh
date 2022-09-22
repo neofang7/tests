@@ -31,7 +31,8 @@ run() {
 	pushd "$SCRIPT_DIR/../metrics"
 
 	if [ $METRICS_MLC == "true" ]; then
-		mlc/mlc_test_ctr.sh 60
+		#mlc/mlc_test_ctr.sh 60
+		mlc/mlc_full.sh 60
 	fi
 
 	if [ $METRICS_FIO == "true" ]; then
@@ -79,6 +80,8 @@ run() {
 		bash network/iperf3_kubernetes/k8s-network-metrics-iperf3.sh -b
 	fi
 
+	echo "Start to generate csv and pdf."
+	sh statis/statis.sh
 	popd
 }
 
@@ -110,6 +113,10 @@ check() {
 		# done
 
 	fi
+}
+
+statis() {
+
 }
 
 init

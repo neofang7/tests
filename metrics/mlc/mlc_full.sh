@@ -20,7 +20,16 @@ MAX_MEMORY_CONSUMED="${MAX_MEMORY_CONSUMED:-32*1024*1024*1024}"
 MIN_MEMORY_FREE="${MIN_MEMORY_FREE:-2*1024*1024*1024}"
 DUMP_CACHES="${DUMP_CACHES:-1}"
 
-function run_mlc_ctr() {
+function run_a_mlc_case() {
+    mlc_cmd=$1
+    echo 3 > /proc/sys/vm/drop_caches
+    output=`sudo -E ctr -n k8s.io run --runtime io.containerd.run.kata.v2 --rm docker.io/library/metrics-centos:v1 mlc /bin/bash -c "${mlc_cmd}"`
+    sleep 10
+
+    echo ${output}
+}
+
+function run_full_mlc_ctr() {
     restart_containerd_service
     ctr_preinstall
 
@@ -30,14 +39,14 @@ function run_mlc_ctr() {
 
     #Run mlc command:
     #idle latency: mlc --idle_latency -b2g -t10 -c0 -i0 -e -r -l128
-    cmd_idle_latency="mlc --idle_latency -b2g -t10 -c0 -i0 -e -r -l128"
+    cmd_idle_latency="mlc --idle_latency -b2g -t${duration} -c0 -i0 -e -r -l128"
     output=$(ctr_run_a_mlc_case "$cmd_idle_latency")
     data=${output#*base frequency clocks \(}
     idle_latency_ns=$(echo $data | awk '{print $1}')
     echo "idle latency: $idle_latency_ns"
 
     #loaded-latency-R (ns): mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -r -K1 -R
-    cmd_loaded_latency_R="mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -r -K1 -R"
+    cmd_loaded_latency_R="mlc --loaded_latency -d0 -b1g -t${duration} -k1-3 -c0 -e -r -K1 -R"
     output=$(ctr_run_a_mlc_case "$cmd_loaded_latency_R")
     data=$(handle_mlc_output "${output}")
     echo "loaded latency R: $data"
@@ -45,7 +54,7 @@ function run_mlc_ctr() {
     loaded_latency_R_bw=$(echo $data | awk '{print $3}')
 
     #loaded-latency-W2 (ns)	mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -K1 -W2
-    cmd_loaded_latency_W2="mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -r -K1 -W2"
+    cmd_loaded_latency_W2="mlc --loaded_latency -d0 -b1g -t${duration} -k1-3 -c0 -e -r -K1 -W2"
     output=$(ctr_run_a_mlc_case "$cmd_loaded_latency_W2")
     data=$(handle_mlc_output "${output}")
     echo "loaded latency W2: $data"
@@ -53,7 +62,7 @@ function run_mlc_ctr() {
     loaded_latency_W2_bw=$(echo $data | awk '{print $3}')
 
     #loaded-latency-W3 (ns)	mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -K1 -W3
-    cmd_loaded_latency_W3="mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -r -K1 -W3"
+    cmd_loaded_latency_W3="mlc --loaded_latency -d0 -b1g -t${duration} -k1-3 -c0 -e -r -K1 -W3"
     output=$(ctr_run_a_mlc_case "$cmd_loaded_latency_W3")
     data=$(handle_mlc_output "${output}")
     echo "loaded latency W3: $data"
@@ -61,7 +70,7 @@ function run_mlc_ctr() {
     loaded_latency_W3_bw=$(echo $data | awk '{print $3}')
     
     #loaded-latency-W5 (ns)	mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -K1 -W5
-    cmd_loaded_latency_W5="mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -r -K1 -W5"
+    cmd_loaded_latency_W5="mlc --loaded_latency -d0 -b1g -t${duration} -k1-3 -c0 -e -r -K1 -W5"
     output=$(ctr_run_a_mlc_case "$cmd_loaded_latency_W5")
     data=$(handle_mlc_output "${output}")
     echo "loaded latency W5: $data"
@@ -69,7 +78,7 @@ function run_mlc_ctr() {
     loaded_latency_W5_bw=$(echo $data | awk '{print $3}')
 
     #loaded-latency-W6 (ns)	mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -K1 -W6
-    cmd_loaded_latency_W6="mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -r -K1 -W6"
+    cmd_loaded_latency_W6="mlc --loaded_latency -d0 -b1g -t${duration} -k1-3 -c0 -e -r -K1 -W6"
     output=$(ctr_run_a_mlc_case "$cmd_loaded_latency_W6")
     data=$(handle_mlc_output "${output}")
     echo "loaded latency W6: $data"
@@ -77,7 +86,7 @@ function run_mlc_ctr() {
     loaded_latency_W6_bw=$(echo $data | awk '{print $3}')
 
     #loaded-latency-W7 (ns)	mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -K1 -W7
-    cmd_loaded_latency_W7="mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -r -K1 -W7"
+    cmd_loaded_latency_W7="mlc --loaded_latency -d0 -b1g -t${duration} -k1-3 -c0 -e -r -K1 -W7"
     output=$(ctr_run_a_mlc_case "$cmd_loaded_latency_W7")
     data=$(handle_mlc_output "${output}")
     echo "loaded latency W7: $data"
@@ -85,7 +94,7 @@ function run_mlc_ctr() {
     loaded_latency_W7_bw=$(echo $data | awk '{print $3}')
 
     #loaded-latency-W8 (ns)	mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -K1 -W8
-    cmd_loaded_latency_W8="mlc --loaded_latency -d0 -b1g -t30 -k1-3 -c0 -e -r -K1 -W8"
+    cmd_loaded_latency_W8="mlc --loaded_latency -d0 -b1g -t${duration} -k1-3 -c0 -e -r -K1 -W8"
     output=$(ctr_run_a_mlc_case "$cmd_loaded_latency_W8")
     data=$(handle_mlc_output "${output}")
     echo "loaded latency W8: $data"
@@ -209,4 +218,4 @@ EOF
     clean_env_ctr
 }
 
-run_mlc_ctr
+run_full_mlc_ctr
