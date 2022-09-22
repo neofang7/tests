@@ -115,10 +115,6 @@ check() {
 	fi
 }
 
-statis() {
-
-}
-
 init
 run
 #check
