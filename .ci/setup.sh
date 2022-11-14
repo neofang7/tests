@@ -141,37 +141,39 @@ install_extra_tools() {
 }
 
 main() {
-	local setup_type="default"
+	# local setup_type="default"
 
-	# Travis only needs a very basic setup
-	set +o nounset
-	[ "$TRAVIS" = "true" ] && setup_type="minimal"
-	set -o nounset
+	# # Travis only needs a very basic setup
+	# set +o nounset
+	# [ "$TRAVIS" = "true" ] && setup_type="minimal"
+	# set -o nounset
 
-	[ "$setup_type" = "default" ] && bash -f "${cidir}/install_go.sh" -p -f
+	# [ "$setup_type" = "default" ] && bash -f "${cidir}/install_go.sh" -p -f
 
-	setup_distro_env "$setup_type"
+	# setup_distro_env "$setup_type"
 
-	[ "$setup_type" = "minimal" ] && info "finished minimal setup" && exit 0
+	# [ "$setup_type" = "minimal" ] && info "finished minimal setup" && exit 0
 
-	print_environment
-	if [ "$arch" == "s390x" ] && ([ "$ID" == "fedora" ] || [[ "${ID_LIKE:-}" =~ "fedora" ]]); then
-		# see https://github.com/kata-containers/osbuilder/issues/217
-		export CC=gcc
-	fi
+	# print_environment
+	# if [ "$arch" == "s390x" ] && ([ "$ID" == "fedora" ] || [[ "${ID_LIKE:-}" =~ "fedora" ]]); then
+	# 	# see https://github.com/kata-containers/osbuilder/issues/217
+	# 	export CC=gcc
+	# fi
 
-	install_container_engine
-	enable_nested_virtualization
-	install_kata
-	install_extra_tools
-	echo "Disable systemd-journald rate limit"
-	sudo crudini --set /etc/systemd/journald.conf Journal RateLimitInterval 0s
-	sudo crudini --set /etc/systemd/journald.conf Journal RateLimitBurst 0
-	sudo systemctl restart systemd-journald
+	# install_container_engine
+	# enable_nested_virtualization
+	# install_kata
+	# install_extra_tools
+	# echo "Disable systemd-journald rate limit"
+	# sudo crudini --set /etc/systemd/journald.conf Journal RateLimitInterval 0s
+	# sudo crudini --set /etc/systemd/journald.conf Journal RateLimitBurst 0
+	# sudo systemctl restart systemd-journald
 
 	echo "Drop caches"
 	sync
 	sudo -E PATH=$PATH bash -c "echo 3 > /proc/sys/vm/drop_caches"
+
+	
 }
 
 main $*
