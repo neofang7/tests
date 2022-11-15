@@ -62,19 +62,11 @@ arch=$("${tests_repo_dir}/.ci/kata-arch.sh")
 # fi
 
 # Get the repository of the PR to be tested
-#mkdir -p $(dirname "${kata_repo_dir}")
-#[ -d "${kata_repo_dir}" ] || git clone "https://${kata_repo}.git" "${kata_repo_dir}"
+mkdir -p $(dirname "${kata_repo_dir}")
+[ -d "${kata_repo_dir}" ] || git clone "https://${kata_repo}.git" "${kata_repo_dir}"
 
 #Clean up the environment before running tests.
 #tests_repo="${tests_repo}" "${tests_repo_dir}/.ci/clean_up.sh"
-
-#install kata tools under ${kata_repo_dir}
-pushd "${kata_repo_dir}"
-"${GOPATH}/src/${tests_repo}/.ci/install_go.sh" -p -f
-popd
-
-# Resolve kata dependencies
-"${GOPATH}/src/${tests_repo}/.ci/resolve-kata-dependencies.sh"
 
 #skip static anlysis tools here.
 
@@ -82,8 +74,10 @@ pushd "${GOPATH}/src/${tests_repo}"
 source ".ci/ci_job_flags.sh"
 source "${cidir}/lib.sh"
 
-echo "run setup.sh from $PWD"
-".ci/setup.sh"
+#echo "run setup.sh from $PWD"
+#".ci/setup.sh"
+echo "Install operator"
+sudo -E sh .ci/kubernetes.sh
 
 pushd ${tests_repo_dir}/cmd/checkmetrics/ci_worker/
 cp checkmetrics-json-qemu-sv-c1-small-x86-01.toml checkmetrics-json-qemu-$(uname -n).toml
@@ -108,3 +102,5 @@ mkdir -p metrics/results
 echo "Test Completed."
 
 popd
+
+#Start up k8s

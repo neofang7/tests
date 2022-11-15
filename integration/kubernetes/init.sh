@@ -266,7 +266,7 @@ start_cri_runtime_service() {
 }
 
 main() {
-	local arch="$("${SCRIPT_PATH}/../../.ci/kata-arch.sh")"
+	#local arch="$("${SCRIPT_PATH}/../../.ci/kata-arch.sh")"
 	local kubernetes_version=$(get_version "externals.kubernetes.version")
 	local cri_runtime_socket=""
 	local cgroup_driver=""
@@ -286,9 +286,9 @@ main() {
 	esac
 
         #Load arch-specific configure file
-	if [ -f "${SCRIPT_PATH}/../../.ci/${arch}/kubernetes/init.sh" ]; then
-		source "${SCRIPT_PATH}/../../.ci/${arch}/kubernetes/init.sh"
-	fi
+	#if [ -f "${SCRIPT_PATH}/../../.ci/${arch}/kubernetes/init.sh" ]; then
+	#	source "${SCRIPT_PATH}/../../.ci/${arch}/kubernetes/init.sh"
+	#fi
 
 	# store iptables if CI running on bare-metal. The configuration should be
 	# restored afterwards the tests finish.

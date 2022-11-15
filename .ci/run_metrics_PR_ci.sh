@@ -62,14 +62,14 @@ run() {
 
 		# Run the density tests - no KSM, so no need to wait for settle
 		# (so set a token 5s wait)
-		disable_ksm
-		bash density/memory_usage.sh 20 5
+		# disable_ksm
+		# bash density/memory_usage.sh 20 5
 
 		# Run storage tests
-		bash storage/blogbench.sh
+		# bash storage/blogbench.sh
 
 		# Run the density test inside the container
-		bash density/memory_usage_inside_container.sh
+		# bash density/memory_usage_inside_container.sh
 
 		# Run the time tests
 		bash time/launch_times.sh -i public.ecr.aws/ubuntu/ubuntu:latest -n 20
