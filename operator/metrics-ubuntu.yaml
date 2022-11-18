@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metrics-ubuntu
+spec:
+  selector:
+    matchLabels:
+      app: metrics-ubuntu
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: metrics-ubuntu
+    spec:
+      runtimeClassName: kata-qemu-tdx
+      containers:
+      - name: metrics-ubuntu
+        image: neo-server.sh.intel.com/metrics-ubuntu:1.0
+        imagePullPolicy: Always  

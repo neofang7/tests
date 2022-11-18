@@ -18,8 +18,14 @@ CI=${CI:-""}
 untaint_k8s_node() {
 	local node_name="$(hostname | awk '{print tolower($0)}')"
 	info "Untaint the node so pods can be scheduled. ${node_name}"
-	#kubectl taint nodes "${node_name}" node-role.kubernetes.io/master-
-	kubectl taint nodes "${node_name}" node-role.kubernetes.io/control-plane-
+	is_master=$(kubectl get no | grep "master")
+	if [ ! -z "${is_master}" ]; then
+		info "taint node-role.kubernetes.io/master-"
+		kubectl taint nodes "${node_name}" node-role.kubernetes.io/master-
+	else
+		info "taint node-role.kubernetes.io/control-plane-"
+		kubectl taint nodes "${node_name}" node-role.kubernetes.io/control-plane-
+	fi
 }
 
 wait_k8s_pods_ready() {
@@ -174,6 +180,10 @@ start_metrics_kubernetes() {
 }
 
 install_operator() {
+	if [ -d /opt/confidential-containers ]; then
+		now=$(date '+%Y_%m_%d')
+		mv /opt/confidential-containers /opt/confidential-containers.${now}
+	fi
 	kubectl apply -f operator/deploy.yaml
 	wait_operator_pod_ready "cc-operator-controller-manager" 2
 	kubectl apply -f https://raw.githubusercontent.com/confidential-containers/operator/v0.1.0/config/samples/ccruntime.yaml
