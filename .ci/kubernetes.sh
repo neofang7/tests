@@ -143,7 +143,7 @@ configure_k8s_network() {
 stop_metrics_kubernetes() {
 	local cri_socket_path="$1"
 	info "Clean kubernetes since testing is completed."
-	kubeadm init --cri-socket "${cri_socket_path}"
+	kubeadm reset --cri-socket "${cri_socket_path}"
 }
 
 # Start Kubernetes
@@ -180,7 +180,7 @@ start_metrics_kubernetes() {
 }
 
 install_operator() {
-	if [ -d /opt/confidential-containers ]; then
+	if [ ! -d /opt/confidential-containers ]; then
 		now=$(date '+%Y_%m_%d')
 		mv /opt/confidential-containers /opt/confidential-containers.${now}
 	fi
@@ -188,6 +188,33 @@ install_operator() {
 	wait_operator_pod_ready "cc-operator-controller-manager" 2
 	kubectl apply -f https://raw.githubusercontent.com/confidential-containers/operator/v0.1.0/config/samples/ccruntime.yaml
 	wait_operator_pod_ready "cc-operator-daemon-install" 1
+	cp operator/configuration-qemu-tdx.toml /opt/confidential-containers/share/defaults/kata-containers/configuration-qemu-tdx.toml
+}
+
+wait_pod() {
+	pod=$1
+	count=$2
+	local pods_status="kubectl get pods"
+	local system_pod_wait_time=120
+	local sleep_time=10
+
+	running_pattern="${pod}*.*${count}/${count}.*Running"
+	if ! waitForProcess "$system_pod_wait_time" "$sleep_time" \
+		"$pods_status | grep "${running_pattern}""; then
+		info "Some expected Pods ${pod} aren't running after ${system_pod_wait_time} seconds." 1>&2
+		${pods_status} 1>&2
+		# Print debug information for the problematic pods.
+		for pod in $(kubectl get pods \
+			-o jsonpath='{.items[*].metadata.name}'); do
+			if [[ "$pod" =~ ${pod} ]]; then
+				echo "[DEBUG] Pod ${pod}:" 1>&2
+				kubectl describe pod $pod 1>&2 || true
+			fi
+		done
+		die "${pod} is not ready . Bailing out..."
+	fi
+	info "${pod} pod is ready."
+
 }
 
 main() {
@@ -201,11 +228,12 @@ main() {
 		#check_processes
 		info "Start kubernets"
 		start_metrics_kubernetes "${cri_runtime_socket}" "${cgroup_driver}"
+		untaint_k8s_node
 		info "Configure the cluster network"
 		configure_k8s_network
 		info "Wait for system's pods be ready and running"
 		wait_k8s_pods_ready
-		untaint_k8s_node
+		
 	else
 		info "K8S has already installed."
 	fi
@@ -218,6 +246,9 @@ main() {
 		kubectl label node "${node_name}" node-role.kubernetes.io/worker=
 		install_operator
 	fi
+
+	kubectl apply -f ../operator/metrics-ubuntu.yaml
+	wait_pod "metrics-ubuntu" 1
 }
 
 main "$@"

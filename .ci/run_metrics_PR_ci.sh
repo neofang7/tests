@@ -72,7 +72,7 @@ run() {
 		# bash density/memory_usage_inside_container.sh
 
 		# Run the time tests
-		bash time/launch_times.sh -i public.ecr.aws/ubuntu/ubuntu:latest -n 20
+		#bash time/launch_times.sh -i public.ecr.aws/ubuntu/ubuntu:latest -n 20
 	fi
 
 	if [ $METRICS_IPERF == "true" ]; then
@@ -85,36 +85,6 @@ run() {
 	popd
 }
 
-# Check the results
-check() {
-	if [ -n "${METRICS_CI}" ]; then
-		# Ensure we have the latest checkemtrics
-		pushd "$CHECKMETRICS_DIR"
-		make
-		sudo make install
-		popd
-
-		# For bare metal repeatable machines, the config file name is tied
-		# to the uname of the machine.
-		local CM_BASE_FILE="${CHECKMETRICS_CONFIG_DIR}/checkmetrics-json-${KATA_HYPERVISOR}-$(uname -n).toml"
-
-		checkmetrics --debug --percentage --basefile ${CM_BASE_FILE} --metricsdir ${RESULTS_DIR}
-		cm_result=$?
-		if [ ${cm_result} != 0 ]; then
-			echo "checkmetrics FAILED (${cm_result})"
-			exit ${cm_result}
-		fi
-
-		# Save results
-		# sudo mkdir -p "${RESULTS_DIR}/artifacts"
-		# echo "Move results"
-		# for f in ${RESULTS_DIR}/*.json; do
-		# 	mv -- "$f" "${RESULTS_DIR}/artifacts/${KATA_HYPERVISOR}-$(basename $f)"
-		# done
-
-	fi
-}
-
 init
 run
-#check
+
