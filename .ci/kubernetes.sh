@@ -40,8 +40,8 @@ wait_k8s_pods_ready() {
 	local dns_pod="coredns"
 	local system_pod=($apiserver_pod $controller_pod $etcd_pod $scheduler_pod $dns_pod)
 
-	local system_pod_wait_time=120
-	local sleep_time=5
+	local system_pod_wait_time=300
+	local sleep_time=10
 	local running_pattern=""
 	for pod_entry in "${system_pod[@]}"; do
 		running_pattern="${pod_entry}.*1/1.*Running"
@@ -106,7 +106,7 @@ cleanup_k8s_cni_configuration() {
 	fi
 }
 
-wait_coredns_pod_ready() {
+wait_flannel_pod_ready() {
 	local pods_status="kubectl get pods --all-namespaces"
 	local coredns_pod="kube-flannel-ds"
 	local system_pod_wait_time=60
@@ -126,7 +126,7 @@ wait_coredns_pod_ready() {
 					pod $pod 1>&2 || true
 			fi
 		done
-		die "Coredns is not fully ready. Bailing out..."
+		die "Fallenl is not fully ready. Bailing out..."
 	fi
 	info "Flannel core dns ready."
 }
@@ -136,7 +136,7 @@ configure_k8s_network() {
 	local network_plugin_config="https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml"
 	kubectl apply -f ${network_plugin_config}
 	#check network configuration
-	wait_coredns_pod_ready
+	wait_flannel_pod_ready
 }
 
 # Stop Kubernetes

@@ -7,7 +7,7 @@ if [ ! -f ${rootfs_image} ]; then
     exit 1
 fi
 
-cert_file=$1
+cert_file=$2
 if [ ! -f ${cert_file} ]; then
     echo "${cert_file} does not exist."
     exit 1
@@ -24,7 +24,7 @@ mount -ooffset=$((512*${start_sector})) ${device} ${mnt_dir}
 
 user=$(whoami)
 chown ${user} ${mnt_dir}/etc/ssl/certs/ca-certificates.crt
-lines=$(cat ~/certs/domain.crt | awk 'BEGIN{ RS = ""; FS = "\n" }{print $2}')
+lines=$(cat ${cert_file} | awk 'BEGIN{ RS = ""; FS = "\n" }{print $2}')
 isexist=$(grep "${lines}" ${mnt_dir}/etc/ssl/certs/ca-certificates.crt)
 if [ -z "${isexist}" ]; then
     echo "${isexist} Write certs into rootfs."

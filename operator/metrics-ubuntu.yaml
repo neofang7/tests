@@ -15,5 +15,12 @@ spec:
       runtimeClassName: kata-qemu-tdx
       containers:
       - name: metrics-ubuntu
-        image: neo-server.sh.intel.com/metrics-ubuntu:1.0
-        imagePullPolicy: Always  
+        image: ngcn-registry.sh.intel.com/metrics-ubuntu:1.0
+        imagePullPolicy: Always
+        resources:
+                requests:
+                        memory: "32Gi"
+                        cpu: "8"
+                limits:
+                        memory: "32Gi"
+                        cpu: "8"
